@@ -1,0 +1,184 @@
+Code:
+Mainactivity.java
+package com.example.a55;
+
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+
+import com.google.android.material.chip.Chip;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+
+public class MainActivity extends AppCompatActivity {
+
+
+   ToggleButton likedislike;
+   FloatingActionButton star;
+   EditText editbox;
+   Chip reply,delete;
+   ConstraintLayout CL;
+
+
+
+
+   @Override
+   protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       EdgeToEdge.enable(this);
+       setContentView(R.layout.activity_main);
+       likedislke = findViewById(R.id.toggleButton);
+       star = findViewById(R.id.floatingActionButton);
+       editbox = findViewById(R.id.editTextText);
+       reply = findViewById(R.id.chip);
+       delete = findViewById(R.id.chip2);
+       CL = findViewById(R.id.main);
+
+
+      likedislke.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              if (likedislike.isChecked()) {
+                  likedislike.setBackgroundResource(R.drawable.baseline_access_time_24);
+              } else {
+                  likedislike.setBackgroundResource(R.drawable.baseline_access_time_filled_24);
+              }
+          });
+
+
+       star.setOnClickListener(new View.OnClickListener()
+
+
+          {
+              @Override
+              public void onClick (View v){
+              Snackbar.make(CL, "Added to favs", Snackbar.LENGTH_LONG).setAction("undo", new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      Toast.makeText(getApplicationContext(), "Removed from favs", Toast.LENGTH_SHORT).show();
+                  }
+              });
+
+
+          }
+          });
+       reply.setOnClickListener(
+               new View.OnClickListener() {
+                   @Override
+              public void onClick(View v){
+                                                editbox.setVisibility(View.VISIBLE);
+                                            }
+              });
+                               }
+                   );
+       delete.setOnClickListener(
+               new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       editbox.setVisibility(View.INVISIBLE);
+                   }
+                   }
+               );
+
+
+       ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+           Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           return insets;
+       });
+   }
+}
+
+
+
+
+
+
+
+ACTIVITY
+
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+   xmlns:tools="http://schemas.android.com/tools"
+   android:id="@+id/main"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   tools:context=".MainActivity">
+
+
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Hello World!"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent" />
+
+
+   <ToggleButton
+       android:id="@+id/likedislike"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+
+
+       android:text="ToggleButton"
+       tools:layout_editor_absoluteX="99dp"
+       tools:layout_editor_absoluteY="78dp" />
+
+
+   <com.google.android.material.floatingactionbutton.FloatingActionButton
+       android:id="@+id/floatingActionButton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:clickable="true"
+       app:srcCompat="@android:drawable/btn_star"
+       tools:layout_editor_absoluteX="74dp"
+       tools:layout_editor_absoluteY="482dp" />
+
+
+   <com.google.android.material.chip.Chip
+       android:id="@+id/chip"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       tools:layout_editor_absoluteX="98dp"
+       tools:layout_editor_absoluteY="209dp" />
+
+
+   <com.google.android.material.chip.Chip
+       android:id="@+id/chip2"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       tools:layout_editor_absoluteX="241dp"
+       tools:layout_editor_absoluteY="209dp" />
+
+
+   <EditText
+       android:id="@+id/editbox"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:ems="10"
+       android:inputType="text"
+       android:text="Name"
+       android:visibility="invisible"
+       tools:layout_editor_absoluteX="76dp"
+       tools:layout_editor_absoluteY="426dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

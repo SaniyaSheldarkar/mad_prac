@@ -1,0 +1,277 @@
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- PRN Input -->
+    <EditText
+        android:id="@+id/prn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="50dp"
+        android:hint="Enter PRN"
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Name Input -->
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:hint="Enter Name"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/prn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Email Input -->
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:hint="Enter Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Insert Button -->
+    <Button
+        android:id="@+id/insert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Insert"
+        app:layout_constraintTop_toBottomOf="@id/email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Select Button -->
+    <Button
+        android:id="@+id/select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Select"
+        app:layout_constraintTop_toBottomOf="@id/insert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Update Button -->
+    <Button
+        android:id="@+id/update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Update"
+        app:layout_constraintTop_toBottomOf="@id/select"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Delete Button -->
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Delete"
+        app:layout_constraintTop_toBottomOf="@id/update"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Output TextView -->
+    <TextView
+        android:id="@+id/showtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@id/delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainAcitivity.java
+package com.example.a3055_122;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+public class MainActivity extends AppCompatActivity {
+    EditText prn, name, email;
+    Button insert, select, update, delete;
+    TextView showtext;
+    FirebaseDatabase fb;
+    DatabaseReference dref;
+    DataSnapshot dsp;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dref = FirebaseDatabase.getInstance().getReference("student");
+
+        // Initializing UI elements
+        prn = findViewById(R.id.prn);
+        name = findViewById(R.id.name);
+        email = findViewById(R.id.email);
+
+        insert = findViewById(R.id.insert);
+        select = findViewById(R.id.select);
+        update = findViewById(R.id.update);
+        delete = findViewById(R.id.delete);
+
+        showtext = findViewById(R.id.showtext);
+
+        insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String stdprn = prn.getText().toString();
+                String stdname = name.getText().toString();
+                String stdemail = email.getText().toString();
+                student std = new student(stdprn, stdname, stdemail);
+                String stdid = dref.push().getKey();
+                dref.child(stdid).setValue(std);
+
+                Toast.makeText(MainActivity.this, "Inserted", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        dref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dsp = snapshot;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String detail = dsp.getValue().toString();
+                showtext.setText(detail);
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String stdprn = prn.getText().toString();
+                dref.orderByChild("prn").equalTo(stdprn).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                                childSnapshot.getRef().removeValue();
+                                Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+        });
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String stdprn = prn.getText().toString();
+                String stdname = name.getText().toString();
+                String stdemail = email.getText().toString();
+
+                dref.orderByChild("prn").equalTo(stdprn).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                                childSnapshot.getRef().child("name").setValue(stdname);
+                                childSnapshot.getRef().child("email").setValue(stdemail);
+                                Toast.makeText(MainActivity.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(MainActivity.this, "PRN not found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(MainActivity.this, "Update Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+}
+
+student.java
+package com.example.a3055_122;
+
+public class student {
+    String prn,name,email;
+
+    public student() {
+    }
+
+    public student(String prn, String name, String email) {
+        this.prn = prn;
+        this.name = name;
+        this.email = email;
+    }
+
+    public String getPrn() {
+        return prn;
+    }
+
+    public void setPrn(String prn) {
+        this.prn = prn;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+

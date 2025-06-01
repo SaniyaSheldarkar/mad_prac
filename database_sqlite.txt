@@ -1,0 +1,345 @@
+INSERT:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- PRN EditText -->
+    <EditText
+        android:id="@+id/prn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="PRN"
+        android:inputType="text"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.087" />
+
+    <!-- Name EditText -->
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="NAME"
+        android:inputType="text"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prn"
+        app:layout_constraintVertical_bias="0.053" />
+
+    <!-- Insert Button -->
+
+    <!-- Update Button -->
+    <Button
+        android:id="@+id/insert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INSERT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintVertical_bias="0.163" />
+
+    <!-- Delete Button -->
+
+    <Button
+        android:id="@+id/update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="320dp"
+        android:text="UPDATE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/insert" />
+
+    <!-- Select Button -->
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="260dp"
+        android:text="DELETE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/update"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="172dp"
+        android:text="SELECT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delete"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+MainActivity.java
+package com.example.a3055_121;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    EditText prn,name;
+    Button insert,update,select,delete;
+    DatabaseHandler dbh;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+      prn = findViewById(R.id.prn);
+      name = findViewById(R.id.name);
+      insert = findViewById(R.id.insert);
+      delete = findViewById(R.id.delete);
+      update = findViewById(R.id.update);
+      select = findViewById(R.id.select);
+      dbh = new DatabaseHandler(MainActivity.this);
+
+      insert.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+                    String p  = prn.getText().toString();
+                    String n = name.getText().toString();
+                    dbh.opendb();
+                    dbh.insertdata(p,n);
+                    Toast.makeText(MainActivity.this, "Value Inserted", Toast.LENGTH_LONG).show();
+                    dbh.closedb();
+          }
+      });
+     delete.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+             String p = prn.getText().toString();
+             dbh.opendb();
+             dbh.deletedata(p);
+             Toast.makeText(MainActivity.this, "Data deleted", Toast.LENGTH_LONG).show();
+             dbh.closedb();
+         }
+     });
+
+     select.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+             String p = prn.getText().toString();
+             dbh.opendb();
+             String studentName = dbh.selectData(p);
+             if(studentName != null){
+                 name.setText(studentName);
+                 Toast.makeText(MainActivity.this,"Record Found",Toast.LENGTH_LONG).show();
+             }else{
+                 Toast.makeText(MainActivity.this,"No record found",Toast.LENGTH_LONG).show();
+             }
+             dbh.closedb();
+
+         }
+     });
+
+     update.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+             String p= prn.getText().toString();
+             String n= name.getText().toString();
+             dbh.opendb();
+             dbh.updatedata(p,n);
+             Toast.makeText(MainActivity.this,"Updated",Toast.LENGTH_LONG).show();
+             dbh.closedb();
+         }
+     });
+    }
+}
+
+
+DatabaseHandler.java
+package com.example.a3055_121;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+
+public class DatabaseHandler extends SQLiteOpenHelper {
+    private  static final  String dbname = " college";
+    private static final String tablename = "Student";
+    private static final String prncol = "prn";
+    private static final String namecol = "name";
+    SQLiteDatabase sqldb;
+
+
+    public DatabaseHandler(@Nullable Context context) {
+        super(context, dbname, null, 1);
+    }
+
+    /*public DatabaseHandler(MainActivity.this) {
+        super();
+    }*/
+
+    @Override
+    public void onCreate(SQLiteDatabase sqldb) {
+        String query = "CREATE TABLE "+tablename+"  ("+prncol+"  TEXT PRIMARY KEY, "+namecol+"  TEXT);";
+        sqldb.execSQL(query);
+    }
+
+
+    public void opendb(){
+        sqldb=getWritableDatabase();
+    }
+
+    public void closedb(){
+        sqldb.close();
+    }
+    public void insertdata(String p, String n){
+/*
+        ContentValues cv = new ContentValues();
+        cv.put(prncol,p);
+        cv.put(namecol,n);
+        sqldb.insert(tablename,null,cv);*/
+        String query1 = "INSERT INTO " + tablename + " (" + prncol + ", " + namecol + ") VALUES ('" + p + "', '" + n + "');";
+       sqldb.execSQL(query1);
+    }
+
+    public void deletedata(String p){
+        //DELETE FROM  tablename WHERE prn = ' ';
+        String query2 = "DELETE FROM " + tablename + " WHERE " + prncol + " = '" + p + "';";
+        sqldb.execSQL(query2);
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase sqldb, int oldversion, int newversion) {
+
+    }
+
+    public void deletedata() {
+    }
+    public void updatedata(String p, String n){
+        //UPDATE tablename WHERE prn = 'p' SET name='n'
+        String query3 = "UPDATE " + tablename + " SET " + namecol + " = '" + n + "' WHERE " + prncol + " = '" + p + "';";
+    }
+
+    public String selectData(String p) {
+        String query= "SELECT " + namecol + " FROM " + tablename + " WHERE " + prncol + "=?";
+        Cursor cursor = sqldb.rawQuery(query, new String[]{p});
+        if (cursor.moveToFirst()) {
+            String name = cursor.getString(0);
+            cursor.close();
+            return name;
+        }
+        cursor.close();
+        return null;
+
+    }
+}
+
+Sqlitehelper.class
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package android.database.sqlite;
+
+import android.annotation.NonNull;
+import android.annotation.Nullable;
+import android.content.Context;
+import android.database.DatabaseErrorHandler;
+
+public abstract class SQLiteOpenHelper implements AutoCloseable {
+    public SQLiteOpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public SQLiteOpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public SQLiteOpenHelper(@Nullable Context context, @Nullable String name, int version, @NonNull SQLiteDatabase.OpenParams openParams) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public String getDatabaseName() {
+        throw new RuntimeException("Stub!");
+    }
+
+    public void setWriteAheadLoggingEnabled(boolean enabled) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public void setLookasideConfig(int slotSize, int slotCount) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public void setOpenParams(@NonNull SQLiteDatabase.OpenParams openParams) {
+        throw new RuntimeException("Stub!");
+    }
+
+    /** @deprecated */
+    @Deprecated
+    public void setIdleConnectionTimeout(long idleConnectionTimeoutMs) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public SQLiteDatabase getWritableDatabase() {
+        throw new RuntimeException("Stub!");
+    }
+
+    public SQLiteDatabase getReadableDatabase() {
+        throw new RuntimeException("Stub!");
+    }
+
+    public synchronized void close() {
+        throw new RuntimeException("Stub!");
+    }
+
+    public void onConfigure(SQLiteDatabase db) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public abstract void onCreate(SQLiteDatabase var1);
+
+    public abstract void onUpgrade(SQLiteDatabase var1, int var2, int var3);
+
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        throw new RuntimeException("Stub!");
+    }
+
+    public void onOpen(SQLiteDatabase db) {
+        throw new RuntimeException("Stub!");
+    }
+}
