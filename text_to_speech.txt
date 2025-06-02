@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+   xmlns:tools="http://schemas.android.com/tools"
+   android:id="@+id/main"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   tools:context=".MainActivity">
+
+
+   <EditText
+       android:id="@+id/Entertext"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:ems="10"
+       android:inputType="text"
+       android:text="Enter text"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.497"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintVertical_bias="0.198" />
+
+
+   <Button
+       android:id="@+id/speak"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="speak"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/editTextText"
+       app:layout_constraintVertical_bias="0.135" />
+
+
+   <Button
+       android:id="@+id/stop"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="stop"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.496"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/speak"
+       app:layout_constraintVertical_bias="0.264" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+
+import java.util.Locale;
+
+
+public class MainActivity extends AppCompatActivity {
+
+
+   EditText EnterText;
+   Button speak,stop;
+   TextToSpeech textToSpeech;
+
+
+   @Override
+   protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       EdgeToEdge.enable(this);
+       setContentView(R.layout.activity_main);
+       EnterText= findViewById(R.id.Entertext);
+       speak= findViewById(R.id.speak);
+       stop= findViewById(R.id.stop);
+       textToSpeech= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+           @Override
+           public void onInit(int status) {
+               if(status== TextToSpeech.SUCCESS){
+                   textToSpeech.setLanguage(Locale.UK);
+               }
+           }
+       });
+       speak.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               String s= EnterText.getText().toString();
+               textToSpeech.speak(s,TextToSpeech.QUEUE_FLUSH,null,null);
+           }
+       });
+       stop.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if(textToSpeech!= null){
+                   textToSpeech.stop();
+                   textToSpeech.shutdown();
+               }
+           }
+       });
+   }
+}

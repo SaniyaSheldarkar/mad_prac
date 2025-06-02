@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    android:background="#FFFFFF">
+
+    <!-- Audio Controls -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Audio Controls"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/bplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play" />
+
+        <Button
+            android:id="@+id/bpause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            android:layout_marginLeft="8dp" />
+
+        <Button
+            android:id="@+id/bstop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:layout_marginLeft="8dp" />
+    </LinearLayout>
+
+    <!-- Video View -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video Player"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="24dp"/>
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"/>
+
+    <!-- Video Controls -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/vbplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play" />
+
+        <Button
+            android:id="@+id/vbpause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            android:layout_marginLeft="8dp" />
+
+        <Button
+            android:id="@+id/vbstop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:layout_marginLeft="8dp" />
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.VideoView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.a3023p8.R;
+
+public class MainActivity extends AppCompatActivity {
+
+    Button play, pause, stop;
+    VideoView v;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        play = findViewById(R.id.bplay);
+        pause = findViewById(R.id.bpause);
+        stop = findViewById(R.id.bstop);
+
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.a1);
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.start();
+            }
+        });
+
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.pause();
+            }
+        });
+
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.stop();
+            }
+        });
+
+        play = findViewById(R.id.vbplay);
+        pause = findViewById(R.id.vbpause);
+        stop = findViewById(R.id.vbstop);
+        v = findViewById(R.id.videoView);
+
+        MediaPlayer mp1 = MediaPlayer.create(getApplicationContext(), R.raw.vid);
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp1.start();
+            }
+        });
+
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp1.pause();
+            }
+        });
+
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp1.stop();
+            }
+        });
+
+        String path = "android.resource://" + getPackageName() + "/raw/vid";
+        v.setVideoPath(path);
+        v.start();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+}
